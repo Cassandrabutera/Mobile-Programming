@@ -1,153 +1,186 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(CalculatorApp());
+  runApp(MyApp());
 }
 
-class CalculatorApp extends StatelessWidget {
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: CalculatorScreen(),
+      home: MainScreen(),
     );
   }
 }
 
-class CalculatorScreen extends StatefulWidget {
+class MainScreen extends StatefulWidget {
   @override
-  _CalculatorScreenState createState() => _CalculatorScreenState();
+  _MainScreenState createState() => _MainScreenState();
 }
 
-class _CalculatorScreenState extends State<CalculatorScreen> {
-  String _output = '0';
-  double num1 = 0;
-  double num2 = 0;
-  String operand = '';
+class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
 
-  void _buttonPressed(String buttonText) {
-    if (buttonText == 'C') {
-      _clear();
-    } else if (buttonText == '+' || buttonText == '-' || buttonText == '*' || buttonText == '/') {
-      _operandPressed(buttonText);
-    } else if (buttonText == '=') {
-      _calculate();
-    } else {
-      _digitPressed(buttonText);
-    }
-  }
-
-  void _clear() {
-    setState(() {
-      _output = '0';
-      num1 = 0;
-      num2 = 0;
-      operand = '';
-    });
-  }
-
-  void _operandPressed(String newOperand) {
-    setState(() {
-      operand = newOperand;
-      num1 = double.parse(_output);
-      _output = '0';
-    });
-  }
-
-  void _digitPressed(String digit) {
-    setState(() {
-      if (_output == '0') {
-        _output = digit;
-      } else {
-        _output += digit;
-      }
-    });
-  }
-
-  void _calculate() {
-    setState(() {
-      num2 = double.parse(_output);
-      switch (operand) {
-        case '+':
-          _output = (num1 + num2).toString();
-          break;
-        case '-':
-          _output = (num1 - num2).toString();
-          break;
-        case '*':
-          _output = (num1 * num2).toString();
-          break;
-        case '/':
-          if (num2 != 0) {
-            _output = (num1 / num2).toString();
-          } else {
-            _output = 'Error';
-          }
-          break;
-      }
-      operand = '';
-      num1 = 0;
-      num2 = 0;
-    });
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 5, vsync: this); 
   }
 
   @override
   Widget build(BuildContext context) {
-    int columns = 4; 
     return Scaffold(
       appBar: AppBar(
-        title: Text('My Calculator'),
+        backgroundColor: Color.fromARGB(255, 254, 184, 184),
+        title: Text(
+          'Cassandra App Navigation',
+          style: TextStyle(color: Colors.white), 
+        ),
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: [
+            Tab(
+              icon: Icon(Icons.home),
+              text: 'Home',
+            ),
+            Tab(
+              icon: Icon(Icons.search),
+              text: 'Search',
+            ),
+            Tab(
+              icon: Icon(Icons.settings),
+              text: 'Settings',
+            ),
+            Tab(
+              icon: Icon(Icons.photo_album), 
+              text: 'Gallery',
+            ),
+            Tab(
+              icon: Icon(Icons.notifications),
+              text: 'Notifications',
+            ),
+          ],
+        ),
       ),
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            child: Container(
-              padding: EdgeInsets.all(8.0),
-              alignment: Alignment.bottomRight,
-              child: Text(
-                _output,
-                style: TextStyle(fontSize: 28.0, fontWeight: FontWeight.bold),
-              ),
+      drawer: Drawer(
+        child: DrawerContent(tabController: _tabController),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          // Home Screen
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Welcome to Cassandra App',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 20),
+                Text(
+                  'This is the home screen to provide you with some information about our app.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+              ],
             ),
           ),
-          Divider(),
-          Expanded(
-            flex: 2,
-            child: Container(
-              child: GridView.builder(
-                itemCount: buttonText.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: columns,
-                  crossAxisSpacing: 10.0,
-                  mainAxisSpacing: 10.0,
+          // Search Screen
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'You can Search Here',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                itemBuilder: (BuildContext context, int index) {
-                  return GestureDetector(
-                    onTap: () {
-                      _buttonPressed(buttonText[index]);
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: isOperator(buttonText[index])
-                            ? Color.fromARGB(255, 176, 104, 9)
-                            : Color.fromARGB(220, 141, 128, 128),
-                        borderRadius: BorderRadius.circular(15.0),
-                      ),
-                      child: Center(
-                        child: Text(
-                          buttonText[index],
-                          style: TextStyle(
-                            fontSize: 14.0,
-                            fontWeight: FontWeight.bold,
-                            color: isOperator(buttonText[index])
-                                ? Colors.white
-                                : Color.fromARGB(255, 6, 6, 6),
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
+                SizedBox(height: 20),
+                Text(
+                  'This is the search screen to help you search for what you want',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Settings Screen
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Settings Tab',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 20),
+                Text(
+                  'Here are our settings.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Gallery Screen
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Our Gallery',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 20),
+                Text(
+                  'This is the gallery to display about us in pictures.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Notifications Screen
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Dont miss the Notifications!',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 20),
+                Text(
+                  'Notifications, Reminders and the To Do Agenda will Appear here',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -155,18 +188,76 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     );
   }
 
-  bool isOperator(String buttonText) {
-    return buttonText == '+' ||
-        buttonText == '-' ||
-        buttonText == '*' ||
-        buttonText == '/' ||
-        buttonText == '=';
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
+}
 
-  final List<String> buttonText = [
-    '7', '8', '9', '/',
-    '4', '5', '6', '*',
-    '1', '2', '3', '-',
-    'C', '0', '=', '+',
-    '(', ')', '.','%',];
+class DrawerContent extends StatelessWidget {
+  final TabController tabController;
+
+  const DrawerContent({required this.tabController});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: EdgeInsets.zero,
+      children: [
+        DrawerHeader(
+          decoration: BoxDecoration(
+            color: Color.fromARGB(255, 250, 167, 195),
+          ),
+          child: Text(
+            'Cassandra App Navigation Menu',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 24,
+            ),
+          ),
+        ),
+        ListTile(
+          leading: Icon(Icons.home),
+          title: Text('Home'),
+          onTap: () {
+            tabController.animateTo(0);
+            Navigator.pop(context);
+          },
+        ),
+        ListTile(
+          leading: Icon(Icons.search),
+          title: Text('Search'),
+          onTap: () {
+            tabController.animateTo(1);
+            Navigator.pop(context);
+          },
+        ),
+        ListTile(
+          leading: Icon(Icons.settings),
+          title: Text('Settings'),
+          onTap: () {
+            tabController.animateTo(2);
+            Navigator.pop(context);
+          },
+        ),
+        ListTile(
+          leading: Icon(Icons.photo_album),
+          title: Text('Gallery'), 
+          onTap: () {
+            tabController.animateTo(3);
+            Navigator.pop(context);
+          },
+        ),
+        ListTile(
+          leading: Icon(Icons.notifications),
+          title: Text('Notifications'),
+          onTap: () {
+            tabController.animateTo(4);
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    );
+  }
 }
